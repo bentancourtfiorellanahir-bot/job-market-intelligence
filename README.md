@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./banner.png" alt="Labor Market Intelligence Platform banner" width="100%" />
+</p>
+
 <h1 align="center">Labor Market Intelligence Platform</h1>
 
 <p align="center">
