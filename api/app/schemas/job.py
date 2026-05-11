@@ -19,6 +19,7 @@ class JobPostingRead(BaseModel):
     salary_min: int | None
     salary_max: int | None
     salary_currency: str | None
+    skills: list[str]
     apply_url: str | None
     posting_url: str | None
     published_at: datetime | None
@@ -28,3 +29,11 @@ class JobPostingRead(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+class JobStatsRead(BaseModel):
+    total_jobs: int
+    active_jobs: int
+    inactive_jobs: int
+    by_remote_type: dict[str, int]
+    by_seniority: dict[str, int]
+    by_source: dict[str, int]

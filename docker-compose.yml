@@ -30,6 +30,8 @@ services:
       - "8000:8000"
     volumes:
       - ./api:/workspace/api
+      - ./alembic.ini:/workspace/alembic.ini:ro
+      - ./migrations:/workspace/migrations
     depends_on:
       db:
         condition: service_healthy

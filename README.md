@@ -183,10 +183,6 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 
 ## Architecture
 
-<p align="center">
-  <img src="./docs/images/architecture/architecture.png" alt="Labor Market Intelligence Platform architecture diagram" width="100%" />
-</p>
-
 ```text
                  +-----------------+
                  | Job Sources     |
@@ -228,6 +224,8 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 - normalization
 - historical persistence
 - API exposure
+- inactive posting detection
+- snapshot deduplication
 
 </details>
 
@@ -242,7 +240,8 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 | Database | PostgreSQL | Store canonical jobs and historical snapshots |
 | Local Infra | Docker Compose | Portable local environment |
 | ORM | SQLAlchemy | Data models and persistence |
-| Future NLP | spaCy + LLMs | Skill extraction and text enrichment |
+| Migrations | Alembic | Version database schema changes |
+| NLP | Keyword heuristics | Lightweight skill extraction and text enrichment |
 | Future Search | pgvector | Embeddings and semantic retrieval |
 | Future Analytics | dbt + ClickHouse | Dimensional models and heavy analytics |
 
@@ -255,6 +254,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 |-- api/
 |   |-- app/
 |   |   |-- api/
+|   |   |-- contracts/
 |   |   |-- core/
 |   |   |-- db/
 |   |   |-- models/
@@ -269,10 +269,14 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 |   |-- normalizers/
 |   |-- Dockerfile
 |   `-- requirements.txt
+|-- migrations/
+|   `-- versions/
 |-- sql/
 |   `-- init.sql
 |-- tests/
-|   `-- test_normalizers.py
+|   |-- test_api_jobs.py
+|   |-- test_normalizers.py
+|   `-- test_repository_jobs.py
 |-- docker-compose.yml
 |-- CONTRIBUTING.md
 |-- LICENSE
@@ -292,6 +296,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
         <li>Powers the API</li>
         <li>Represents active records</li>
         <li>Keeps normalized fields</li>
+        <li>Stores extracted skills</li>
         <li>Tracks first and last seen timestamps</li>
       </ul>
     </td>
@@ -382,13 +387,23 @@ docker compose up --build
 docker compose run --rm pipelines python -m flows.ingest_greenhouse
 ```
 
-### 5. Explore the API
+### 5. Run database migrations
+
+```bash
+docker compose run --rm api alembic upgrade head
+```
+
+### 6. Explore the API
 
 - `http://localhost:8000/health`
 - `http://localhost:8000/docs`
 - `GET /v1/jobs`
+- `GET /v1/jobs?q=python`
+- `GET /v1/jobs?remote_type=remote&seniority=senior`
+- `GET /v1/jobs?before_last_seen_at=2026-05-11T12:00:00Z`
+- `GET /v1/jobs/stats`
 
-### 6. Run basic checks
+### 7. Run basic checks
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
@@ -401,11 +416,12 @@ python -m unittest discover -s tests -p "test_*.py"
 The repository now includes:
 
 - CI workflow for lint, compile, and test checks
+- Alembic migration scaffold
 - issue templates
 - contribution guide
 - MIT license
 - editor configuration
-- a smoke-test suite for normalization logic
+- tests for normalization, repository behavior, and API routes
 
 <hr/>
 
@@ -416,6 +432,8 @@ The repository now includes:
 - [x] ingest jobs
 - [x] normalize records
 - [x] store historical snapshots
+- [x] deduplicate unchanged snapshots
+- [x] mark missing jobs inactive
 - [x] expose a simple API
 - [ ] add dashboard layer
 
