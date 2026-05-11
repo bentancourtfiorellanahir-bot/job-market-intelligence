@@ -62,4 +62,3 @@ This keeps the MVP simple while preserving history for downstream trend analysis
 - add dbt models for marts
 - add ClickHouse for heavier analytics
 - add embeddings and semantic search with `pgvector`
-
