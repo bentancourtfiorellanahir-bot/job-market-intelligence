@@ -183,6 +183,10 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 
 ## Architecture
 
+<p align="center">
+  <img src="./docs/images/architecture/architecture.png" alt="Labor Market Intelligence Platform architecture diagram" width="100%" />
+</p>
+
 ```text
                  +-----------------+
                  | Job Sources     |
