@@ -237,6 +237,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 - API exposure
 - inactive posting detection
 - snapshot deduplication
+- dashboard layer
 
 </details>
 
@@ -393,16 +394,18 @@ Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-### 3. Start the stack
+### 3. Set a valid Greenhouse board token
+
+The Greenhouse connector requires a real public board token. For a quick local test, the default example uses:
+
+```env
+GREENHOUSE_BOARD_TOKEN=greenhouse
+```
+
+### 4. Start the stack
 
 ```bash
 docker compose up --build
-```
-
-### 4. Run the ingestion flow
-
-```bash
-docker compose run --rm pipelines python -m flows.ingest_greenhouse
 ```
 
 ### 5. Run database migrations
@@ -411,7 +414,13 @@ docker compose run --rm pipelines python -m flows.ingest_greenhouse
 docker compose run --rm api alembic upgrade head
 ```
 
-### 6. Explore the API
+### 6. Run the ingestion flow
+
+```bash
+docker compose run --rm pipelines python -m flows.ingest_greenhouse
+```
+
+### 7. Explore the API
 
 - `http://localhost:8000/dashboard`
 - `http://localhost:8000/health`
@@ -422,7 +431,7 @@ docker compose run --rm api alembic upgrade head
 - `GET /v1/jobs?before_last_seen_at=2026-05-11T12:00:00Z`
 - `GET /v1/jobs/stats`
 
-### 7. Run basic checks
+### 8. Run basic checks
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
@@ -450,7 +459,7 @@ The repository now includes:
 
 ### Current phase status
 
-- Phase 1 is largely complete as a serious MVP foundation.
+- Phase 1 is complete as a serious MVP foundation.
 - Phase 2 already has baseline intelligence features implemented.
 - Phase 3 is still pending.
 
@@ -494,6 +503,7 @@ The repository now includes:
         <li>A clean MVP</li>
         <li>A structured ingestion platform</li>
         <li>An analytics-ready backend</li>
+        <li>A working dashboard</li>
         <li>A strong portfolio project</li>
       </ul>
     </td>
