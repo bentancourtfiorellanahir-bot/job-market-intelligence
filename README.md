@@ -9,6 +9,8 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/github/actions/workflow/status/bentancourtfiorellanahir-bot/job-market-intelligence/ci.yml?branch=main&style=flat-square&label=CI" alt="CI status" />
+  <img src="https://img.shields.io/github/license/bentancourtfiorellanahir-bot/job-market-intelligence?style=flat-square" alt="License" />
   <img src="https://img.shields.io/badge/Python-3.12+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.12+" />
   <img src="https://img.shields.io/badge/FastAPI-API-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Prefect-Orchestration-1F3A8A?style=flat-square" alt="Prefect" />
@@ -128,21 +130,24 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
       <ul>
         <li>FastAPI backend</li>
         <li>PostgreSQL persistence</li>
+        <li>Alembic migrations</li>
         <li>Prefect ingestion flow</li>
         <li>Greenhouse connector</li>
-        <li>Normalization layer</li>
-        <li>Historical snapshots</li>
+        <li>Normalization and enrichment layer</li>
+        <li>Historical snapshots and inactive-job detection</li>
+        <li>Filtering and stats endpoints</li>
+        <li>Repository and API tests</li>
       </ul>
     </td>
     <td width="50%">
       <h3>Next layers</h3>
       <ul>
         <li>Lever and Ashby connectors</li>
-        <li>Salary normalization</li>
-        <li>Skill extraction</li>
-        <li>Remote classification</li>
+        <li>Advanced salary normalization</li>
+        <li>Expanded skill taxonomy and enrichment</li>
+        <li>Trend analysis and dashboards</li>
         <li>Embeddings and semantic search</li>
-        <li>Analytics marts and dashboards</li>
+        <li>Analytics marts and warehouse layer</li>
       </ul>
     </td>
   </tr>
@@ -183,6 +188,10 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 
 ## Architecture
 
+<p align="center">
+  <img src="./docs/images/architecture/architecture.png" alt="Labor Market Intelligence Platform architecture diagram" width="100%" />
+</p>
+
 ```text
                  +-----------------+
                  | Job Sources     |
@@ -222,6 +231,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 
 - ingestion
 - normalization
+- baseline enrichment
 - historical persistence
 - API exposure
 - inactive posting detection
@@ -235,7 +245,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
-| API | FastAPI | Serve job records and future analytics endpoints |
+| API | FastAPI | Serve job records and analytics-ready endpoints |
 | Orchestration | Prefect | Run ingestion and enrichment flows |
 | Database | PostgreSQL | Store canonical jobs and historical snapshots |
 | Local Infra | Docker Compose | Portable local environment |
@@ -263,14 +273,19 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 |   |   `-- services/
 |   |-- Dockerfile
 |   `-- requirements.txt
+|-- docs/
+|   `-- images/
+|       |-- architecture/
+|       |-- branding/
+|       `-- screenshots/
+|-- migrations/
+|   `-- versions/
 |-- pipelines/
 |   |-- connectors/
 |   |-- flows/
 |   |-- normalizers/
 |   |-- Dockerfile
 |   `-- requirements.txt
-|-- migrations/
-|   `-- versions/
 |-- sql/
 |   `-- init.sql
 |-- tests/
@@ -279,7 +294,9 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 |   `-- test_repository_jobs.py
 |-- docker-compose.yml
 |-- CONTRIBUTING.md
+|-- CODE_OF_CONDUCT.md
 |-- LICENSE
+|-- SECURITY.md
 `-- .env.example
 ```
 
@@ -419,6 +436,8 @@ The repository now includes:
 - Alembic migration scaffold
 - issue templates
 - contribution guide
+- security policy
+- code of conduct
 - MIT license
 - editor configuration
 - tests for normalization, repository behavior, and API routes
@@ -426,6 +445,12 @@ The repository now includes:
 <hr/>
 
 ## Roadmap
+
+### Current phase status
+
+- Phase 1 is largely complete as a serious MVP foundation.
+- Phase 2 already has baseline intelligence features implemented.
+- Phase 3 is still pending.
 
 ### Phase 1 | Serious MVP
 
@@ -439,10 +464,13 @@ The repository now includes:
 
 ### Phase 2 | Intelligence
 
-- [ ] skill extraction
-- [ ] salary normalization
-- [ ] remote classification
-- [ ] seniority detection improvements
+- [x] baseline skill extraction
+- [x] baseline salary parsing and normalization
+- [x] remote classification
+- [x] seniority detection
+- [ ] richer skill taxonomy and ontology mapping
+- [ ] stronger salary normalization across formats and currencies
+- [ ] confidence-scored enrichment
 - [ ] trend analysis
 
 ### Phase 3 | AI Layer
