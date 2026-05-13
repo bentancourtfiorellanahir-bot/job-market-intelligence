@@ -5,7 +5,7 @@
 <h1 align="center">Labor Market Intelligence Platform</h1>
 
 <p align="center">
-  <strong>Legal-first job intelligence infrastructure for analytics, enrichment, and AI-ready market insights.</strong>
+  <strong>MVP analytics and job data platform for public ATS ingestion, historical tracking, dashboards, and API access.</strong>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-  Building a production-oriented foundation for labor market intelligence using safer public sources instead of brittle, high-risk scraping.
+  A portfolio-grade backend and data project using safer public sources instead of brittle, high-risk scraping.
 </p>
 
 <p align="center">
@@ -60,15 +60,15 @@
 
 ## EN | About
 
-This repository is a serious MVP for a **labor market intelligence platform**.
+This repository is an MVP analytics and job data platform for **labor market intelligence**.
 
 It is designed to ingest, normalize, preserve, and serve job-market data in a way that is:
 
 - safer from a compliance perspective
 - easier to scale technically
 - ready for analytics
-- ready for future AI layers
-- strong as a portfolio-grade engineering project
+- ready for future search and enrichment layers
+- strong as a realistic portfolio engineering project
 
 Instead of starting with aggressive scraping from fragile platforms, this project begins with:
 
@@ -78,19 +78,19 @@ Instead of starting with aggressive scraping from fragile platforms, this projec
 - structured normalization
 - append-only historical storage
 
-> The core idea is simple: build the data platform first, then layer intelligence and AI on top of clean, reproducible pipelines.
+> The core idea is simple: build clean, reproducible pipelines first, then layer search, analytics, and enrichment on top.
 
 ## ES | Sobre el proyecto
 
-Este repositorio es un MVP serio de una **plataforma de inteligencia del mercado laboral**.
+Este repositorio es un MVP de analitica y datos de empleo para una **plataforma de inteligencia del mercado laboral**.
 
 Esta pensado para ingestar, normalizar, conservar y exponer datos de empleo de una forma:
 
 - mas segura desde lo legal
 - mas escalable tecnicamente
 - lista para analitica
-- preparada para futuras capas de AI
-- fuerte como proyecto de portfolio
+- preparada para futuras capas de busqueda y enriquecimiento
+- fuerte como proyecto realista de portfolio
 
 En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyecto empieza con:
 
@@ -100,7 +100,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
 - normalizacion estructurada
 - almacenamiento historico append-only
 
-> La idea central es clara: construir primero la base de datos y los pipelines, y despues sumar inteligencia y AI arriba.
+> La idea central es clara: construir primero datos y pipelines reproducibles, y despues sumar busqueda, analitica y enriquecimiento arriba.
 
 <hr/>
 
