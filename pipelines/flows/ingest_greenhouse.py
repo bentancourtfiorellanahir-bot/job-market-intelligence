@@ -1,4 +1,7 @@
+import logging
+
 from prefect import flow, get_run_logger, task
+from prefect.exceptions import MissingContextError
 
 from app import models  # noqa: F401
 from app.contracts.jobs import IngestionResult
@@ -24,6 +27,14 @@ class PipelineSettings(BaseSettings):
 
 
 settings = PipelineSettings()
+logger = logging.getLogger(__name__)
+
+
+def _run_logger():
+    try:
+        return get_run_logger()
+    except MissingContextError:
+        return logger
 
 
 @task
@@ -41,7 +52,7 @@ def fetch_jobs() -> list[dict]:
 def persist_jobs(jobs: list[dict]) -> IngestionResult:
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    logger = get_run_logger()
+    run_logger = _run_logger()
     result: IngestionResult = {
         "seen": len(jobs),
         "inserted": 0,
@@ -64,7 +75,7 @@ def persist_jobs(jobs: list[dict]) -> IngestionResult:
                     result["snapshots_created"] += 1
             except (KeyError, TypeError, ValueError) as exc:
                 result["failed"] += 1
-                logger.warning("Skipping malformed Greenhouse job payload: %s", exc)
+                run_logger.warning("Skipping malformed Greenhouse job payload: %s", exc)
 
         result["marked_inactive"] = repository.mark_missing_jobs_inactive(
             source="greenhouse",
@@ -80,9 +91,29 @@ def persist_jobs(jobs: list[dict]) -> IngestionResult:
 
 @flow(name="ingest-greenhouse-jobs")
 def ingest_greenhouse_jobs() -> IngestionResult:
-    logger = get_run_logger()
+    run_logger = _run_logger()
     jobs = fetch_jobs()
     result = persist_jobs(jobs)
+    run_logger.info(
+        (
+            "Processed Greenhouse board '%s': seen=%s inserted=%s updated=%s "
+            "unchanged=%s snapshots=%s inactive=%s failed=%s"
+        ),
+        settings.greenhouse_board_token,
+        result["seen"],
+        result["inserted"],
+        result["updated"],
+        result["unchanged"],
+        result["snapshots_created"],
+        result["marked_inactive"],
+        result["failed"],
+    )
+    return result
+
+
+def run_ingest_greenhouse_jobs() -> IngestionResult:
+    jobs = fetch_jobs.fn()
+    result = persist_jobs.fn(jobs)
     logger.info(
         (
             "Processed Greenhouse board '%s': seen=%s inserted=%s updated=%s "
@@ -101,4 +132,4 @@ def ingest_greenhouse_jobs() -> IngestionResult:
 
 
 if __name__ == "__main__":
-    ingest_greenhouse_jobs()
+    run_ingest_greenhouse_jobs()

@@ -1,6 +1,7 @@
 import importlib.util
 import sys
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -116,6 +117,17 @@ class JobRepositoryTests(unittest.TestCase):
         self.assertEqual(stats["active_jobs"], 1)
         self.assertEqual(stats["inactive_jobs"], 1)
         self.assertEqual(stats["by_remote_type"]["remote"], 2)
+
+    def test_upsert_serializes_datetimes_for_json_columns(self) -> None:
+        job = normalized_job("job-3")
+        job["published_at"] = datetime(2026, 5, 11, tzinfo=timezone.utc)
+
+        result = self.repository.upsert_job(job, {"id": "job-3", "updated_at": job["published_at"]})
+        snapshot = self.session.scalars(select(JobSnapshot)).all()[0]
+
+        self.assertEqual(result.status, "inserted")
+        self.assertEqual(snapshot.normalized_json["published_at"], "2026-05-11 00:00:00+00:00")
+        self.assertEqual(snapshot.raw_json["updated_at"], "2026-05-11 00:00:00+00:00")
 
 
 if __name__ == "__main__":

@@ -16,6 +16,10 @@ def _stable_hash(payload: dict[str, Any]) -> str:
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
 
+def _json_ready(payload: dict[str, Any]) -> dict[str, Any]:
+    return json.loads(json.dumps(payload, default=str))
+
+
 class JobRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
@@ -62,7 +66,9 @@ class JobRepository:
 
     def upsert_job(self, normalized_job: NormalizedJob, raw_job: dict[str, Any]) -> UpsertResult:
         normalized_job = {**normalized_job, "is_active": normalized_job.get("is_active", True)}
-        normalized_hash = _stable_hash(normalized_job)
+        normalized_json = _json_ready(normalized_job)
+        raw_json = _json_ready(raw_job)
+        normalized_hash = _stable_hash(normalized_json)
         stmt = select(JobPosting).where(
             JobPosting.source == normalized_job["source"],
             JobPosting.source_job_id == normalized_job["source_job_id"],
@@ -74,7 +80,7 @@ class JobRepository:
         if record is None:
             record = JobPosting(
                 **normalized_job,
-                raw_json=raw_job,
+                raw_json=raw_json,
                 first_seen_at=now,
                 last_seen_at=now,
             )
@@ -83,7 +89,7 @@ class JobRepository:
         else:
             for field, value in normalized_job.items():
                 setattr(record, field, value)
-            record.raw_json = raw_job
+            record.raw_json = raw_json
             record.last_seen_at = now
 
         latest_snapshot = self.db.scalar(
@@ -104,8 +110,8 @@ class JobRepository:
                 JobSnapshot(
                     source=normalized_job["source"],
                     source_job_id=normalized_job["source_job_id"],
-                    normalized_json=normalized_job,
-                    raw_json=raw_job,
+                    normalized_json=normalized_json,
+                    raw_json=raw_json,
                     is_active=normalized_job["is_active"],
                 )
             )
@@ -139,8 +145,8 @@ class JobRepository:
                 JobSnapshot(
                     source=record.source,
                     source_job_id=record.source_job_id,
-                    normalized_json=normalized,
-                    raw_json=record.raw_json,
+                    normalized_json=_json_ready(normalized),
+                    raw_json=_json_ready(record.raw_json),
                     is_active=False,
                 )
             )

@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app import models  # noqa: F401
-from app.api.routes import router
+from app.api.routes import dashboard_router, router
 from app.core.config import settings
 from app.db.base import Base
 from app.db.session import engine
@@ -30,3 +30,4 @@ def healthcheck() -> dict[str, str]:
 
 
 app.include_router(router)
+app.include_router(dashboard_router)

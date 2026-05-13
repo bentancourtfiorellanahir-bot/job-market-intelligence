@@ -19,7 +19,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.api.routes import router
+from app.api.routes import dashboard_router, router
 from app.db.base import Base
 from app.db.session import get_db
 from app.repositories.jobs import JobRepository
@@ -76,6 +76,7 @@ class JobsApiTests(unittest.TestCase):
 
         self.app = FastAPI()
         self.app.include_router(router)
+        self.app.include_router(dashboard_router)
         self.app.dependency_overrides[get_db] = override_get_db
         self.client = TestClient(self.app)
 
@@ -95,6 +96,13 @@ class JobsApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["total_jobs"], 2)
         self.assertEqual(response.json()["active_jobs"], 2)
+
+    def test_dashboard_page_renders(self) -> None:
+        response = self.client.get("/dashboard")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Labor Market Intelligence Dashboard", response.text)
+        self.assertIn("Senior Backend Engineer", response.text)
 
 
 if __name__ == "__main__":

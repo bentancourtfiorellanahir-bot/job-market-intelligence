@@ -136,6 +136,7 @@ En lugar de arrancar con scraping agresivo sobre plataformas fragiles, el proyec
         <li>Normalization and enrichment layer</li>
         <li>Historical snapshots and inactive-job detection</li>
         <li>Filtering and stats endpoints</li>
+        <li>Dashboard layer served from FastAPI</li>
         <li>Repository and API tests</li>
       </ul>
     </td>
@@ -412,6 +413,7 @@ docker compose run --rm api alembic upgrade head
 
 ### 6. Explore the API
 
+- `http://localhost:8000/dashboard`
 - `http://localhost:8000/health`
 - `http://localhost:8000/docs`
 - `GET /v1/jobs`
@@ -460,7 +462,7 @@ The repository now includes:
 - [x] deduplicate unchanged snapshots
 - [x] mark missing jobs inactive
 - [x] expose a simple API
-- [ ] add dashboard layer
+- [x] add dashboard layer
 
 ### Phase 2 | Intelligence
 
